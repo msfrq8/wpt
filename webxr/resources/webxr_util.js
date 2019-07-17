@@ -28,6 +28,7 @@ function xr_session_promise_test(
     name, func, fakeDeviceInit, sessionMode, properties) {
   let testDeviceController;
   let testSession;
+  let sessionObjects = {};
 
   const webglCanvas = document.getElementsByTagName('canvas')[0];
   if (!webglCanvas) {
@@ -36,6 +37,7 @@ function xr_session_promise_test(
     }, name, properties);
   }
   let gl = webglCanvas.getContext('webgl', {alpha: false, antialias: false});
+  sessionObjects.gl = gl;
 
   xr_promise_test(
       name,
@@ -60,7 +62,8 @@ function xr_session_promise_test(
                               session.updateRenderState({
                                   baseLayer: glLayer
                               });
-                              resolve(func(session, testDeviceController, t));
+                              sessionObjects.glLayer = glLayer;
+                              resolve(func(session, testDeviceController, t, sessionObjects));
                             })
                             .catch((err) => {
                               reject(
